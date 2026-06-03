@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookingKoala Pricing Research — Аналитический отчёт</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1419;
+    --panel: #161c24;
+    --panel-2: #1d2530;
+    --border: #2a3340;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #7ee787;
+    --accent-2: #79c0ff;
+    --warn: #f0b072;
+    --bad: #ff7b72;
+    --good: #56d364;
+    --chart-1: #79c0ff;
+    --chart-2: #7ee787;
+    --chart-3: #f0b072;
+    --chart-4: #d2a8ff;
+    --chart-5: #ff7b72;
+    --chart-6: #ffa657;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.55;
+  }
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+  header.hero {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 28px;
+    margin-bottom: 36px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+  }
+  .hero .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .hero .meta {
+    margin-top: 14px;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .hero .meta span strong { color: var(--text); }
+  h2 {
+    font-size: 22px;
+    margin: 48px 0 18px;
+    border-left: 3px solid var(--accent);
+    padding-left: 12px;
+    letter-spacing: -0.01em;
+  }
+  h3 {
+    font-size: 17px;
+    margin: 28px 0 12px;
+    color: var(--accent-2);
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .kpi {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 18px 16px;
+  }
+  .kpi .label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .kpi .value {
+    font-size: 28px;
+    font-weight: 600;
+    margin-top: 6px;
+    letter-spacing: -0.02em;
+  }
+  .kpi .value.small { font-size: 22px; }
+  .kpi .sub {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .kpi .value.good { color: var(--good); }
+  .kpi .value.warn { color: var(--warn); }
+  .kpi .value.bad  { color: var(--bad); }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 22px;
+  }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .card h3 { margin-top: 0; }
+  .chart-box {
+    position: relative;
+    height: 320px;
+  }
+  .chart-box.tall { height: 420px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--panel-2);
+  }
+  tbody tr:hover { background: rgba(121,192,255,0.04); }
+  td.num { font-variant-numeric: tabular-nums; }
+  td.center, th.center { text-align: center; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+  .badge.good { background: rgba(86,211,100,0.15); color: var(--good); }
+  .badge.warn { background: rgba(240,176,114,0.15); color: var(--warn); }
+  .badge.bad  { background: rgba(255,123,114,0.15); color: var(--bad); }
+  .badge.info { background: rgba(121,192,255,0.15); color: var(--accent-2); }
+  .badge.neutral { background: rgba(139,148,158,0.15); color: var(--muted); }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  ul.clean { padding-left: 18px; }
+  ul.clean li { margin-bottom: 6px; }
+
+  .callout {
+    background: linear-gradient(135deg, rgba(126,231,135,0.08), rgba(121,192,255,0.06));
+    border: 1px solid rgba(126,231,135,0.25);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 16px 0;
+  }
+  .callout.warn {
+    background: linear-gradient(135deg, rgba(240,176,114,0.08), rgba(255,123,114,0.04));
+    border-color: rgba(240,176,114,0.3);
+  }
+  .callout strong { color: var(--accent); }
+  .callout.warn strong { color: var(--warn); }
+
+  code, kbd {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+    font-size: 13.5px;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-row .k { color: var(--muted); }
+  .stat-row .v { font-variant-numeric: tabular-nums; }
+
+  footer {
+    margin-top: 60px;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="hero">
+  <h1>BookingKoala Pricing Research — Аналитический отчёт</h1>
+  <div class="subtitle">10 cleaning-компаний Toronto/GTA на платформе BookingKoala. Метрики прозрачности, частотный анализ услуг, разбор прайса, рекомендации.</div>
+  <div class="meta">
+    <span><strong>Дата отчёта:</strong> 2026-06-02</span>
+    <span><strong>Регион:</strong> Toronto / GTA</span>
+    <span><strong>Платформа:</strong> BookingKoala (Angular SPA, build 142, theme 29)</span>
+    <span><strong>Объём выборки:</strong> 10 компаний</span>
+  </div>
+</header>
+
+<!-- =================== KPI ROW =================== -->
+<section>
+  <h2>Ключевые метрики</h2>
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="label">Всего компаний</div>
+      <div class="value">10</div>
+      <div class="sub">в выборке Toronto/GTA</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Полная прозрачность</div>
+      <div class="value good">1</div>
+      <div class="sub">10% — только Beam Cleaning</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Частичные цены</div>
+      <div class="value warn">2</div>
+      <div class="sub">20% — RNV, Toronto Shine</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Цены скрыты</div>
+      <div class="value bad">7</div>
+      <div class="sub">70% — quote-only / lead-form</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Уник. услуг найдено</div>
+      <div class="value">14</div>
+      <div class="sub">от Residential до Restaurant</div>
+    </div>
+    <div class="kpi">
+      <div class="label">API endpoints</div>
+      <div class="value">20+</div>
+      <div class="sub">из main.js (action→URL map)</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Add-ons (Beam, condo)</div>
+      <div class="value">11</div>
+      <div class="sub">средняя цена ~$55</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Hourly fallback</div>
+      <div class="value small">$40/hour</div>
+      <div class="sub">единый рыночный якорь</div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== TRANSPARENCY + SERVICES =================== -->
+<section>
+  <h2>Прозрачность цен и услуги</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Уровень публичной прозрачности (n=10)</h3>
+      <div class="chart-box"><canvas id="chartTransparency"></canvas></div>
+      <div class="callout warn">
+        <strong>Вывод:</strong> 70% выборки прячут прайс за lead-form или SPA-калькулятор. Это — конкурентное окно: публичный transparent pricing работает как анкер доверия.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Частота сервисов по компаниям</h3>
+      <div class="chart-box tall"><canvas id="chartServices"></canvas></div>
+      <div class="callout">
+        <strong>Топ-3 ядра рынка:</strong> Standard / Deep / Move-In-Out — присутствуют у 6 из 10 (60%). Это must-have. Restaurant, New Baby, Real Estate — нишевые (1/10).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== BEAM DEEP DIVE =================== -->
+<section>
+  <h2>Beam Cleaning — глубокий разбор (единственный с открытым прайсом)</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Condo: цена по числу спален и частоте</h3>
+      <div class="chart-box"><canvas id="chartCondo"></canvas></div>
+      <div style="display:flex; gap:18px; margin-top:14px;">
+        <div style="flex:1">
+          <div class="stat-row"><span class="k">Avg Weekly</span><span class="v">$132.67</span></div>
+          <div class="stat-row"><span class="k">Avg One-time</span><span class="v">$155.67</span></div>
+          <div class="stat-row"><span class="k">Recurring discount</span><span class="v">~15%</span></div>
+        </div>
+        <div style="flex:1">
+          <div class="stat-row"><span class="k">Min (1BR weekly)</span><span class="v">$110</span></div>
+          <div class="stat-row"><span class="k">Max (3BR one-time)</span><span class="v">$189</span></div>
+          <div class="stat-row"><span class="k">Spread</span><span class="v">$79</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Office: цена × площадь × частота</h3>
+      <div class="chart-box"><canvas id="chartOffice"></canvas></div>
+      <div style="display:flex; gap:18px; margin-top:14px;">
+        <div style="flex:1">
+          <div class="stat-row"><span class="k">Avg One-time</span><span class="v">$175.67</span></div>
+          <div class="stat-row"><span class="k">Avg Weekly</span><span class="v">$149.33</span></div>
+          <div class="stat-row"><span class="k">Avg Bi-weekly</span><span class="v">$158</span></div>
+        </div>
+        <div style="flex:1">
+          <div class="stat-row"><span class="k">Min ((&lt;1000 weekly)</span><span class="v">$127</span></div>
+          <div class="stat-row"><span class="k">Max (1501–2000 one-time)</span><span class="v">$199</span></div>
+          <div class="stat-row"><span class="k">Monthly &lt;1000 (?)</span><span class="v">$1420 ⚠</span></div>
+        </div>
+      </div>
+      <div class="callout warn" style="margin-top:14px">
+        <strong>Аномалия данных:</strong> Monthly &lt;1000 sq.ft = $1420 — почти наверняка опечатка на сайте, реалистично <code>$142</code>. Учтено в графике как <code>$142</code>.
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 22px;">
+    <div class="card">
+      <h3>Add-ons (Condo): распределение цен</h3>
+      <div class="chart-box"><canvas id="chartAddonsCondo"></canvas></div>
+      <div style="display:flex; gap:18px; margin-top:14px;">
+        <div style="flex:1">
+          <div class="stat-row"><span class="k">Среднее</span><span class="v">$55.36</span></div>
+          <div class="stat-row"><span class="k">Медиана</span><span class="v">$29</span></div>
+          <div class="stat-row"><span class="k">Мин</span><span class="v">$19</span></div>
+        </div>
+        <div style="flex:1">
+          <div class="stat-row"><span class="k">Макс</span><span class="v">$129 (Move-in/out)</span></div>
+          <div class="stat-row"><span class="k">Самый частый ценник</span><span class="v">$29 (4 add-ons)</span></div>
+          <div class="stat-row"><span class="k">Кол-во add-ons</span><span class="v">11</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Add-ons (Office): per-unit ценообразование</h3>
+      <div class="chart-box"><canvas id="chartAddonsOffice"></canvas></div>
+      <div class="callout">
+        <strong>Паттерн:</strong> для office BookingKoala использует <code>quantity_based</code> add-ons (per 500 sq.ft / per 100 sq.ft) — масштабируется автоматически. Это намного честнее, чем «Sanitation +$25» одним числом.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FREQUENCY + DISCOUNTS =================== -->
+<section>
+  <h2>Частотный анализ и дисконтная модель</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h3>Frequency-разрезы у Beam Condo</h3>
+      <div class="chart-box"><canvas id="chartFrequencyDiscount"></canvas></div>
+      <div class="callout">
+        Weekly даёт ≈ <strong>14.7%</strong> к one-time (1BR: $129 → $110 = 14.7% off).
+      </div>
+    </div>
+    <div class="card">
+      <h3>Frequency-варианты в BookingKoala</h3>
+      <ul class="clean">
+        <li><span class="badge info">one-time</span> — базовый тариф</li>
+        <li><span class="badge good">weekly</span> — ~15% off</li>
+        <li><span class="badge good">bi-weekly</span> — ~10% off</li>
+        <li><span class="badge good">every 4 weeks</span> — ~5–7% off</li>
+        <li><span class="badge neutral">monthly (office)</span> — отдельный тариф у Beam</li>
+      </ul>
+      <div class="stat-row"><span class="k">Frequency-варианты, поддерживаемых API</span><span class="v">4</span></div>
+      <div class="stat-row"><span class="k">Компаний, публикующих recurring-скидку</span><span class="v">2 / 10</span></div>
+    </div>
+    <div class="card">
+      <h3>Промо и купоны</h3>
+      <ul class="clean">
+        <li><strong>Beam:</strong> 15% OFF weekly · 10% OFF one-time (code <code>APPRECIATE</code>, не комбинируется)</li>
+        <li><strong>Toronto Shine:</strong> «up to 15% off» (нет жёсткого условия)</li>
+        <li>API: <code>coupon_code</code> + <code>couponDiscount</code> в payload</li>
+      </ul>
+      <div class="callout warn">
+        <strong>Best practice:</strong> «Save 15% on weekly plans» > «Up to 15% off» — второе читается как тизер.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== CANCELLATION =================== -->
+<section>
+  <h2>Политика отмен (стандартный 3-tier пресет BookingKoala)</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Cancellation fees (Toronto Shine — единственный раскрыл)</h3>
+      <div class="chart-box"><canvas id="chartCancellation"></canvas></div>
+      <div class="callout">
+        Это <code>booking_cancellation</code>-пресет BookingKoala. Публикация снимает 80–90% disputes — чем чётче условие, тем меньше chargeback-ов.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Тарифы отмены — табличка</h3>
+      <table>
+        <thead>
+          <tr><th>Когда отменяете</th><th class="center">Штраф</th><th>Источник в API</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&gt; 48 часов до</td><td class="center"><span class="badge good">$0</span></td><td><code>free_tier</code></td></tr>
+          <tr><td>&lt; 48 часов до</td><td class="center"><span class="badge warn">$50 flat</span></td><td><code>late_tier</code></td></tr>
+          <tr><td>В день уборки</td><td class="center"><span class="badge bad">60% цены</span></td><td><code>same_day_tier</code></td></tr>
+          <tr><td>Cleaner уже приехал</td><td class="center"><span class="badge bad">100%</span></td><td><code>onsite_tier</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- =================== START PRICE COMPARISON =================== -->
+<section>
+  <h2>Стартовые цены — сравнение по сервисам</h2>
+  <div class="card">
+    <h3>Стартовые price-anchors (где раскрыты)</h3>
+    <div class="chart-box tall"><canvas id="chartStarting"></canvas></div>
+    <div class="callout">
+      <strong>Анкер-стратегия:</strong> RNV использует «from $99» (Commercial) как самый низкий вход — psychological hook. Beam держит $129 (Condo 1BR one-time) как минимум. Разница важна: <em>«from $99»</em> работает на привлечение, фактическая цена догоняет внутри калькулятора.
+    </div>
+  </div>
+</section>
+
+<!-- =================== COMPANIES TABLE =================== -->
+<section>
+  <h2>Сводная таблица по компаниям</h2>
+  <div class="card" style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Компания</th>
+          <th>Домен</th>
+          <th class="center">Сервисов</th>
+          <th class="center">Прайс</th>
+          <th class="center">Add-ons</th>
+          <th class="center">Discount</th>
+          <th>Особенности</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Beam Cleaning</strong></td>
+          <td>beamcleaning.ca</td>
+          <td class="center num">6</td>
+          <td class="center"><span class="badge good">открыт</span></td>
+          <td class="center"><span class="badge good">11+4</span></td>
+          <td class="center"><span class="badge good">15% / 10%</span></td>
+          <td>Эталон transparency. Hourly $40/hr fallback.</td>
+        </tr>
+        <tr>
+          <td><strong>RNV Cleaning</strong></td>
+          <td>rnvcleaning.com</td>
+          <td class="center num">5</td>
+          <td class="center"><span class="badge warn">starting from</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>3 anchor-цены ($99/$150/$180), guarantee 3-day re-clean</td>
+        </tr>
+        <tr>
+          <td><strong>Toronto Shine</strong></td>
+          <td>torontoshinecleaning.ca</td>
+          <td class="center num">6</td>
+          <td class="center"><span class="badge warn">скрыт</span></td>
+          <td class="center"><span class="badge info">10+ без цен</span></td>
+          <td class="center"><span class="badge warn">up to 15%</span></td>
+          <td>Cancellation fees прозрачны ($50/60%/100%)</td>
+        </tr>
+        <tr>
+          <td>Cleaning Hive</td>
+          <td>cleaninghive.ca</td>
+          <td class="center num">5</td>
+          <td class="center"><span class="badge bad">скрыт</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>Чистейший шаблон BookingKoala</td>
+        </tr>
+        <tr>
+          <td>Take Care Cleaners</td>
+          <td>takecarecleaners.com</td>
+          <td class="center num">9</td>
+          <td class="center"><span class="badge bad">quote-only</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>Широчайший каталог (вкл. Restaurant, Janitorial)</td>
+        </tr>
+        <tr>
+          <td>The Cleaning Hero</td>
+          <td>thecleaninghero.ca</td>
+          <td class="center num">5</td>
+          <td class="center"><span class="badge bad">скрыт</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>SEO-локализация (Scarborough / Markham / Vaughan)</td>
+        </tr>
+        <tr>
+          <td>Deepcleanin6</td>
+          <td><code>*.bookingkoala.com</code></td>
+          <td class="center num">?</td>
+          <td class="center"><span class="badge bad">CF 403</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>Похож на test / staging аккаунт</td>
+        </tr>
+        <tr>
+          <td>Spotless Sweep</td>
+          <td><code>*.bookingkoala.com</code></td>
+          <td class="center num">1+</td>
+          <td class="center"><span class="badge bad">скрыт</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>Landing с pre-selected service-tab</td>
+        </tr>
+        <tr>
+          <td>PureSpace Cleaning CA</td>
+          <td><code>*.bookingkoala.com</code></td>
+          <td class="center num">?</td>
+          <td class="center"><span class="badge bad">launching</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>Свежий аккаунт, маркетинг не запущен</td>
+        </tr>
+        <tr>
+          <td>MaidForHomes CA</td>
+          <td><code>*.bookingkoala.com</code></td>
+          <td class="center num">?</td>
+          <td class="center"><span class="badge bad">CF 403</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td class="center"><span class="badge neutral">—</span></td>
+          <td>Открылась только privacy-policy</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- =================== TECH STACK =================== -->
+<section>
+  <h2>Техническая архитектура BookingKoala (100% выборки)</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Распределение по интеграционным паттернам</h3>
+      <div class="chart-box"><canvas id="chartIntegration"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Структура платформы</h3>
+      <div class="stat-row"><span class="k">Frontend</span><span class="v">Angular SPA · <code>&lt;bk-root&gt;</code></span></div>
+      <div class="stat-row"><span class="k">Build</span><span class="v">customer-build/142, theme v29</span></div>
+      <div class="stat-row"><span class="k">CDN</span><span class="v"><code>cdn.bookingkoala.com</code></span></div>
+      <div class="stat-row"><span class="k">API base</span><span class="v"><code>/api/v1/</code> (+ v5, bktheme, campaigns)</span></div>
+      <div class="stat-row"><span class="k">Auth</span><span class="v">HMAC SHA-512 + Cloudflare</span></div>
+      <div class="stat-row"><span class="k">Auth-token формула</span><span class="v"><code>sha512(domain+LT+X)_sha512(domain)</code></span></div>
+      <div class="stat-row"><span class="k">Embed</span><span class="v">iFrame Resizer 4.1.1, <code>?embed=true</code></span></div>
+      <div class="stat-row"><span class="k">Tax engine</span><span class="v">server-side, <code>bookingTaxRate</code> + <code>bookingTaxType</code></span></div>
+      <div class="callout warn">
+        <strong>Парсинг недоступен:</strong> прайс получают только headless + выполнение <code>bk-tracking.js</code> + <code>tejas-bootstrap.min.js</code>.
+      </div>
+    </div>
+  </div>
+
+  <h3>Ключевые API endpoints (action → URL)</h3>
+  <div class="card" style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>Action</th><th>Path</th><th>Метод</th><th>Назначение</th></tr></thead>
+      <tbody>
+        <tr><td><code>PricingParams</code></td><td><code>pricing-parameters</code></td><td class="center">GET</td><td>Полный прайслист</td></tr>
+        <tr><td><code>Addons</code></td><td><code>addons</code></td><td class="center">GET</td><td>Список платных опций</td></tr>
+        <tr><td><code>FormParams</code></td><td><code>form-params</code></td><td class="center">GET</td><td>Конфиг формы</td></tr>
+        <tr><td><code>AppLoadNew</code></td><td><code>appload-customer</code></td><td class="center">GET</td><td>Bootstrap клиентской формы</td></tr>
+        <tr><td><code>AdmnStngs</code></td><td><code>admin-settings-customer</code></td><td class="center">GET</td><td>Настройки мерчанта</td></tr>
+        <tr><td><code>AvailSett</code></td><td><code>industry-settings-ids/{ind}/{form}</code></td><td class="center">GET</td><td>Слоты и доступность</td></tr>
+        <tr><td><code>bookingsForDates</code></td><td><code>bookings-for-dates</code></td><td class="center">POST</td><td>Проверка свободных дат</td></tr>
+        <tr><td><code>applicableProviders</code></td><td>—</td><td class="center">POST</td><td>Список доступных уборщиков</td></tr>
+        <tr><td><code>LeadContacts</code></td><td>—</td><td class="center">POST</td><td>Приём lead-формы</td></tr>
+        <tr><td><code>Login</code></td><td><code>login</code></td><td class="center">POST</td><td>Авторизация клиента</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- =================== PRICE DRIVERS =================== -->
+<section>
+  <h2>Параметры, влияющие на цену (из main.js)</h2>
+  <div class="card">
+    <div class="pill-row">
+      <span class="badge info">items (тип услуги)</span>
+      <span class="badge info">bedrooms</span>
+      <span class="badge info">bathrooms</span>
+      <span class="badge info">half_bathrooms</span>
+      <span class="badge info">frequency</span>
+      <span class="badge info">extras</span>
+      <span class="badge info">addons</span>
+      <span class="badge info">customer_zipcode</span>
+      <span class="badge info">coupon_code</span>
+      <span class="badge info">bookingTaxRate</span>
+      <span class="badge info">bookingTaxType</span>
+      <span class="badge info">bookingTimeHours/Min</span>
+      <span class="badge info">customer_interior</span>
+      <span class="badge info">quantity_based</span>
+      <span class="badge info">count_multiple_spots</span>
+    </div>
+  </div>
+</section>
+
+<!-- =================== RECOMMENDATIONS =================== -->
+<section>
+  <h2>Что копировать в собственный калькулятор</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>✓ Копировать прямо</h3>
+      <ul class="clean">
+        <li><strong>Beam-style transparent prices</strong> — все цифры в одной таблице, без «request quote».</li>
+        <li><strong>Toronto Shine cancellation policy</strong> — явные <code>$50 / 60% / 100%</code>, снимает disputes.</li>
+        <li><strong>RNV starting-from</strong> на главной — psychological anchor, полный калькулятор за CTA.</li>
+        <li><strong>$40/hr hourly fallback</strong> — отвечает на «а можно вот это?» без расширения каталога.</li>
+        <li><strong>3-tier frequency-скидки</strong> — weekly 15% / bi-weekly 10% / monthly 5%.</li>
+        <li><strong>Duration estimates</strong> — диапазон («2–2.5 hours») формирует ожидания.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>✗ Не копировать</h3>
+      <ul class="clean">
+        <li>Hidden pricing у Take Care / Cleaning Hero — режет конверсию, пользователи ждут прозрачности.</li>
+        <li>«Up to 15% Off» без условия — выглядит как тизер; лучше «Save 15% on weekly plans».</li>
+        <li>Скрытие add-ons до booking-формы — лишает клиента возможности сравнить «по картам».</li>
+        <li>Полная HMAC-обвязка прайса (если нет реальной потребности скрывать) — мешает SEO/индексации.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =================== LIMITATIONS =================== -->
+<section>
+  <h2>Ограничения исследования</h2>
+  <div class="card">
+    <ul class="clean">
+      <li>BookingKoala-калькуляторы публично НЕ парсятся без headless + HMAC-токена (Cloudflare + Auth-token).</li>
+      <li>Прямые сабдомены (deepcleanin6, spotlesssweep, purespace, maidforhomes) — закрыты CF при WebFetch.</li>
+      <li>Wayback Machine WebFetch'ом из сессии недоступен. CDX API работает, но архивы SPA — те же пустые оболочки.</li>
+      <li>Цены из отзывов/маркетинга устаревают; <em>source of truth</em> — <code>/api/v1/pricing-parameters</code>.</li>
+      <li>Monthly &lt;1000 sq.ft = $1420 у Beam — подозреваем опечатку (норма ≈ $142).</li>
+      <li>Следующий шаг для живого прайса: Playwright/Puppeteer с реальным JS-выполнением до получения <code>pricing-parameters</code>.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  Источник данных: <code>bookingkoala_pricing_research.md</code> · 2026-06-02. Графики: Chart.js 4.4.
+</footer>
+
+</div>
+
+<script>
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = '#2a3340';
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
+
+const palette = ['#79c0ff', '#7ee787', '#f0b072', '#d2a8ff', '#ff7b72', '#ffa657', '#a5d6ff', '#56d364'];
+
+// =============== TRANSPARENCY DONUT ===============
+new Chart(document.getElementById('chartTransparency'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Полный прайс', 'Частичные (starting from)', 'Скрыто'],
+    datasets: [{
+      data: [1, 2, 7],
+      backgroundColor: ['#56d364', '#f0b072', '#ff7b72'],
+      borderColor: '#161c24',
+      borderWidth: 3,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '62%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 14 } },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.label}: ${ctx.parsed} компаний (${ctx.parsed * 10}%)`
+        }
+      }
+    }
+  }
+});
+
+// =============== SERVICES FREQUENCY ===============
+new Chart(document.getElementById('chartServices'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Standard / Regular', 'Deep Cleaning', 'Move-In / Out',
+      'Office', 'Airbnb', 'Commercial',
+      'Post-Construction', 'Condo', 'Post-Renovation',
+      'House', 'Real Estate', 'New Baby',
+      'Janitorial', 'Restaurant'
+    ],
+    datasets: [{
+      label: 'Кол-во компаний (из 10)',
+      data: [6, 6, 6, 5, 4, 3, 2, 2, 1, 1, 1, 1, 1, 1],
+      backgroundColor: '#79c0ff',
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { beginAtZero: true, max: 10, ticks: { stepSize: 1 } }
+    }
+  }
+});
+
+// =============== CONDO BAR ===============
+new Chart(document.getElementById('chartCondo'), {
+  type: 'bar',
+  data: {
+    labels: ['1 BR', '2 BR', '3 BR'],
+    datasets: [
+      { label: 'Weekly',   data: [110, 127, 161], backgroundColor: '#7ee787', borderRadius: 4 },
+      { label: 'One-time', data: [129, 149, 189], backgroundColor: '#79c0ff', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: $${ctx.parsed.y}` } }
+    },
+    scales: { y: { beginAtZero: true, ticks: { callback: (v) => '$' + v } } }
+  }
+});
+
+// =============== OFFICE LINE ===============
+new Chart(document.getElementById('chartOffice'), {
+  type: 'line',
+  data: {
+    labels: ['<1000 sq.ft', '1001–1500', '1501–2000'],
+    datasets: [
+      { label: 'One-time', data: [149, 179, 199], borderColor: '#79c0ff', backgroundColor: 'rgba(121,192,255,0.12)', tension: 0.25, fill: true },
+      { label: 'Weekly',   data: [127, 152, 169], borderColor: '#7ee787', backgroundColor: 'rgba(126,231,135,0.10)', tension: 0.25, fill: true },
+      { label: 'Bi-weekly',data: [134, 161, 179], borderColor: '#f0b072', backgroundColor: 'rgba(240,176,114,0.10)', tension: 0.25, fill: true },
+      { label: 'Monthly',  data: [142, 170, 189], borderColor: '#d2a8ff', backgroundColor: 'rgba(210,168,255,0.10)', tension: 0.25, fill: true, borderDash: [4,3] },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: $${ctx.parsed.y}` } }
+    },
+    scales: { y: { beginAtZero: false, ticks: { callback: (v) => '$' + v } } }
+  }
+});
+
+// =============== ADDONS CONDO (histogram-like bar) ===============
+const condoAddons = [
+  { name: 'Empty Cabinets',     price: 19 },
+  { name: 'Green Cleaning',     price: 19 },
+  { name: 'Balcony',            price: 29 },
+  { name: 'Fridge',             price: 29 },
+  { name: 'Oven',               price: 29 },
+  { name: 'Pets',               price: 29 },
+  { name: 'Student Property',   price: 49 },
+  { name: 'Interior Windows',   price: 79 },
+  { name: 'First Time / Deep',  price: 99 },
+  { name: 'Interior Walls',     price: 99 },
+  { name: 'Move In / Out',      price: 129 },
+];
+new Chart(document.getElementById('chartAddonsCondo'), {
+  type: 'bar',
+  data: {
+    labels: condoAddons.map(a => a.name),
+    datasets: [{
+      label: 'Цена $',
+      data: condoAddons.map(a => a.price),
+      backgroundColor: condoAddons.map(a =>
+        a.price <= 29 ? '#7ee787' :
+        a.price <= 79 ? '#79c0ff' :
+        a.price <= 99 ? '#f0b072' : '#ff7b72'),
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => `$${ctx.parsed.x}` } }
+    },
+    scales: { x: { beginAtZero: true, ticks: { callback: (v) => '$' + v } } }
+  }
+});
+
+// =============== ADDONS OFFICE ===============
+new Chart(document.getElementById('chartAddonsOffice'), {
+  type: 'bar',
+  data: {
+    labels: ['Water Plants (flat)', 'Sanitation (per 500 sf)', 'Tile Steam (per 100 sf)', 'Disinfect Electronics'],
+    datasets: [{
+      label: 'Цена $',
+      data: [9, 25, 25, 49],
+      backgroundColor: ['#7ee787', '#79c0ff', '#79c0ff', '#f0b072'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => `$${ctx.parsed.y}` } }
+    },
+    scales: { y: { beginAtZero: true, ticks: { callback: (v) => '$' + v } } }
+  }
+});
+
+// =============== FREQUENCY DISCOUNT ===============
+new Chart(document.getElementById('chartFrequencyDiscount'), {
+  type: 'bar',
+  data: {
+    labels: ['One-time', 'Weekly'],
+    datasets: [
+      { label: '1 BR', data: [129, 110], backgroundColor: '#79c0ff', borderRadius: 4 },
+      { label: '2 BR', data: [149, 127], backgroundColor: '#7ee787', borderRadius: 4 },
+      { label: '3 BR', data: [189, 161], backgroundColor: '#f0b072', borderRadius: 4 },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: $${ctx.parsed.y}` } }
+    },
+    scales: { y: { beginAtZero: true, ticks: { callback: (v) => '$' + v } } }
+  }
+});
+
+// =============== CANCELLATION POLAR / DOUGHNUT ===============
+new Chart(document.getElementById('chartCancellation'), {
+  type: 'doughnut',
+  data: {
+    labels: ['>48h: бесплатно', '<48h: $50 flat', 'В день: 60%', 'Cleaner приехал: 100%'],
+    datasets: [{
+      data: [0, 50, 60, 100],
+      backgroundColor: ['#56d364', '#f0b072', '#ff7b72', '#8b3a32'],
+      borderColor: '#161c24',
+      borderWidth: 3,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '52%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 12, font: { size: 12 } } },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => {
+            const labels = ['Бесплатно', '$50 flat', '60% от стоимости', '100% от стоимости'];
+            return ctx.label + ' — ' + labels[ctx.dataIndex];
+          }
+        }
+      }
+    }
+  }
+});
+
+// =============== STARTING PRICE COMPARE ===============
+new Chart(document.getElementById('chartStarting'), {
+  type: 'bar',
+  data: {
+    labels: ['Commercial (RNV)', 'Condo 1BR weekly (Beam)', 'Condo 1BR one-time (Beam)', 'Office <1000 weekly (Beam)', 'Office <1000 one-time (Beam)', 'Standard (RNV)', 'Deep (RNV)'],
+    datasets: [{
+      label: 'Стартовая цена $',
+      data: [99, 110, 129, 127, 149, 150, 180],
+      backgroundColor: ['#7ee787', '#79c0ff', '#79c0ff', '#a5d6ff', '#a5d6ff', '#f0b072', '#ff7b72'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => `$${ctx.parsed.y}` } }
+    },
+    scales: { y: { beginAtZero: true, ticks: { callback: (v) => '$' + v } } }
+  }
+});
+
+// =============== INTEGRATION PATTERNS ===============
+new Chart(document.getElementById('chartIntegration'), {
+  type: 'polarArea',
+  data: {
+    labels: ['iframe-embed (`?embed=true`)', 'Прямой сабдомен', 'Lead-form (без SPA)', 'Несколько паттернов'],
+    datasets: [{
+      data: [4, 4, 1, 1],
+      backgroundColor: ['rgba(121,192,255,0.55)', 'rgba(126,231,135,0.55)', 'rgba(240,176,114,0.55)', 'rgba(210,168,255,0.55)'],
+      borderColor: ['#79c0ff', '#7ee787', '#f0b072', '#d2a8ff'],
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { padding: 10, font: { size: 12 } } } },
+    scales: { r: { ticks: { backdropColor: 'transparent' } } }
+  }
+});
+</script>
+</body>
+</html>
