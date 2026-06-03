@@ -69,16 +69,16 @@
 
 | Company | URL | BookingKoala domain | Services найдено | Base prices | Add-ons | Recurring discount | Заметки |
 |---|---|---|---|---|---|---|---|
-| **Toronto Shine Cleaning** | torontoshinecleaning.ca | torontoshinecleaning.bookingkoala.com | Regular, Deep, Move-in/out, Office, Post-Construction, Airbnb Turnover | Скрыты до booking-формы | Видно перечень (10+) | «Up to 15% Off for Regular Services» | Прозрачные cancellation-fees: $50 / 60% / 100% |
-| **Cleaning Hive** | cleaninghive.ca | cleaninghive.bookingkoala.com | Regular, Deep, Move-in/out, Post-Renovation, Office/Commercial | Скрыты до booking-формы | Не показаны на маркетинге | Не показан | Один из чистейших BookingKoala-шаблонов |
+| **Toronto Shine Cleaning** | torontoshinecleaning.ca | torontoshinecleaning.bookingkoala.com | Regular, Deep, Move-in/out, Office, Post-Construction, Airbnb Turnover | **Получены из калькулятора** (1 BR: General $183.75, Deep/Reno $417.38, Move $213.75, Office $157.50 — до налога) | Видно перечень (10+) | «Up to 15% Off for Regular Services» | Прозрачные cancellation-fees: $50 / 60% / 100% |
+| **Cleaning Hive** | cleaninghive.ca | cleaninghive.bookingkoala.com | Regular, Deep, Move-in/out, Post-Renovation, Office/Commercial | **Получены из калькулятора** (Studio: General $113.50, Move $108.50, Reno $153.50, Office $100 — до налога) | Не показаны на маркетинге | Не показан | Самые низкие минимальные тарифы в выборке |
 | **Beam Cleaning** | beamcleaning.ca | beamcleaning.bookingkoala.com | Condo, Office, Standard, Deep, Move-in/out, Airbnb | **Полностью открыты** | **Полностью открыты** | Weekly $93–$110+, плюс 15% OFF (regular) / 10% OFF (one-time, code APPRECIATE) | Самый прозрачный прайс в выборке |
 | **Take Care Cleaners** | takecarecleaners.com | takecarecleaners.bookingkoala.com | Deep, Move-Out, Standard, Condo, Airbnb, Janitorial, Commercial, Office, Restaurant | Скрыты | Не показаны | Не показан | Только quote-form, никаких цен на маркетинге |
 | **The Cleaning Hero** | thecleaninghero.ca | thecleaninghero.bookingkoala.com | House, Deep, Moving, Office, Post-Construction | Скрыты | Не показаны | Не показан | Локализация по Scarborough/Markham/Vaughan/RichmondHill |
 | **RNV Cleaning** | rnvcleaning.com | rnvcleaningservices.bookingkoala.com | Residential, Commercial, Real Estate, Airbnb, New Baby | **Частично:** Standard $150 / Deep $180 / Commercial $99 (starting) | Не показаны | Не показан | Cleaning-flow прямо на сайте: `/booknow/book-residential-cleaning/` и т.п. |
-| **Deepcleanin6 (subdomain)** | deepcleanin6.bookingkoala.com | сам сабдомен | n/a | Скрыты (403/CF) | n/a | n/a | Главное домен не отдаёт SPA без CF-байпаса |
-| **Spotless Sweep Cleaning** | spotlesssweepcleaning.bookingkoala.com | сам сабдомен | Move-in/out clean (по URL пути) | Скрыты | n/a | n/a | Глубинная страница `/move-in-out-clean` существует |
-| **PureSpace Cleaning CA** | purespacecleaningca.bookingkoala.com | сам сабдомен | n/a (booknow flow) | Скрыты | n/a | n/a | Маркетинг-сайт `.ca` ещё «Launching Soon» |
-| **MaidForHomes CA** | maidforhomesca.bookingkoala.com | сам сабдомен | n/a (только privacy-policy открылся в curl) | Скрыты | n/a | n/a | Маркетинговый домен закрыт (CF 403) |
+| **Deepcleanin6 (subdomain)** | deepcleanin6.bookingkoala.com | сам сабдомен | Bathroom Only, Condo/Apt (Basic+Total), Home Cleaning | **Получены** (Bathroom $90, Condo Basic $270/4ч, Total $400/6ч — до налога) | Не показаны | Не показан | Несколько отдельных booknow‑страниц вместо единого flow |
+| **Spotless Sweep Cleaning** | spotlesssweepcleaning.bookingkoala.com | сам сабдомен | Move-in/out clean (по URL пути) | Скрыты (CF‑блок) | n/a | n/a | Сайт блокировался организационными настройками |
+| **PureSpace Cleaning CA** | purespacecleaningca.bookingkoala.com | сам сабдомен | House (Package + Hourly), Office | **Получены** (Standard $179, Deep $258, Move $308, Reno $373, Office $72 — до налога) | Hourly 2–7 ч (~$54/ч) | Не показан | Маркетинг `.ca` «Launching Soon», но BK‑аккаунт уже работает |
+| **MaidForHomes CA** | maidforhomesca.bookingkoala.com | сам сабдомен | n/a (только privacy-policy открылся в curl) | Скрыты | n/a | n/a | Актуальный интерфейс бронирования не найден (возможно скрыт или требует аккаунта) |
 
 ---
 
@@ -97,6 +97,16 @@
   - Airbnb Turnover Cleaning
 - **Pricing model:** flat fee, рассчитывается в booking-форме по типу + bedrooms + bathrooms + extras + frequency.
 - **Full prices:** **не опубликованы** на маркетинговом сайте. Открыты только в SPA-калькуляторе (требует реальный браузер).
+- **Цены из калькулятора (One‑Time, 1 BR / 1 BA, 0001–0599 ft²):**
+
+| Услуга | До налога (CAD) | С налогом HST 13% (CAD) |
+|---|---|---|
+| General Cleaning | 183.75 | 207.64 |
+| Move‑In / Move‑Out Cleaning | 213.75 | 241.54 |
+| Post‑Renovation Cleaning | 417.38 | 471.64 |
+| TurnOver / Airbnb Cleaning | 183.75 | 207.64 |
+| Office Cleaning (one‑time) | 157.50 | 177.98 |
+
 - **Add-ons (видимые перечислением, без цен):**
   - Finished basement cleaning
   - Inside oven
@@ -130,7 +140,17 @@
   - Post-Renovation Cleaning
   - Office / Commercial Cleaning
 - **Pricing model:** quote-based / flat-fee по конфигу в форме.
-- **Full prices:** **не опубликованы** (gated by booking form).
+- **Full prices:** **получены из калькулятора** (gated by booking form, но при подборе минимальных параметров видна сводка).
+- **Цены из калькулятора (One‑Time, Studio / 1 BR / 1 BA, 100–499 ft²):**
+
+| Услуга | До налога (CAD) | С налогом HST 13% (CAD) |
+|---|---|---|
+| General Cleaning | 113.50 | 128.26 |
+| Move In / Out Cleaning | 108.50 | 122.61 |
+| Post Renovation Cleaning | 153.50 | 173.46 |
+| TurnOver / Airbnb Cleaning | 113.50 | 128.26 |
+| Office Cleaning (one‑time, 0–499 ft²) | 100.00 | 113.00 |
+
 - **Add-ons:** в перечислении нет; только generic «dusting, vacuuming, mopping».
 - **Discounts:** не опубликованы.
 - **Required inputs (по структуре формы):** type, postal code, размер жилья.
@@ -273,10 +293,27 @@ Durations: 2–2.5 / 2.5–3 / 3–3.5 часов соответственно.
 ### 7. Deepcleanin6 (`deepcleanin6.bookingkoala.com`)
 
 - **URL:** прямой сабдомен, главного домена не нашёл.
-- **Services:** не подтверждено публично.
-- **Pricing model:** не подтверждено.
-- **Full prices:** скрыты за BookingKoala-формой + Cloudflare.
-- **Notes:** сабдомен похож на test/staging account («deepcleanin» + цифра 6).
+- **Структура:** аккаунт собран из нескольких отдельных booking‑страниц (по одной на тип услуги): `/booknow/bathroom-cleaning-only`, `/booknow/condo-apt-cleaning`, `/booknow/home-cleaning` и т.д. Каждая страница открывает свой набор пакетов и extras.
+- **Pricing model:** flat‑rate за пакет + опционально hourly у Condo/Apt; для Home Cleaning — Flat Rate Service по конфигу.
+- **Цены из калькулятора:**
+
+**Bathroom Cleaning Only** (1 ванная, разовая уборка)
+
+| Пакет | До налога (CAD) | С налогом HST 13% (CAD) |
+|---|---|---|
+| Regular Bathroom Cleaning | 90.00 | 101.70 |
+| Mold & Residue Removal | 250.00 | 282.50 |
+
+**Condo / Apt Cleaning** (Studio в Extras)
+
+| Пакет | Длительность | До налога (CAD) | С налогом HST 13% (CAD) |
+|---|---|---|---|
+| Basic | 4 ч | 270.00 | 305.10 |
+| Total (Move‑In/Out) | 6 ч | 400.00 | 452.00 |
+
+**Home Cleaning** — на момент исследования параметры по умолчанию (3 BR / 1 BA / 1000–1499 ft² / bi‑weekly) дали Flat Rate Service ≈ 255 CAD до налога, ≈ 288.15 CAD с налогом. Минимальная конфигурация (1 BR / 1 BA) не была подтверждена; ожидается ниже.
+
+- **Notes:** аккаунт «живой», а не staging — структура с отдельными лендингами под каждый сервис вместо единого `/booknow` flow. Это удобный паттерн для SEO/таргетирования рекламы под конкретный тип уборки.
 
 ### 8. Spotless Sweep Cleaning
 
@@ -290,8 +327,41 @@ Durations: 2–2.5 / 2.5–3 / 3–3.5 часов соответственно.
 
 - **URL:** https://purespacecleaningca.bookingkoala.com/booknow
 - **Маркетинговый сайт:** `purespacecleaning.ca` — статус «Launching Soon».
-- **Services / prices:** скрыты + маркетинг не запущен.
-- **Notes:** свежий BookingKoala-аккаунт, ещё не наполненный.
+- **Покрытие:** Toronto и Burlington (выбирается на первом шаге формы).
+- **Pricing model:** есть две независимые вкладки — **Package** (flat по типу) и **Hourly** (выбор 2–7 ч). Отдельно — Office Cleaning.
+- **Цены из калькулятора (1 BR / 1 BA, 1–999 ft²):**
+
+**House Cleaning — Package**
+
+| Услуга | До налога (CAD) | С налогом HST 13% (CAD) |
+|---|---|---|
+| Standard House Cleaning | 179.00 | 202.27 |
+| Deep Cleaning | 258.00 | 291.54 |
+| Move In / Move Out Cleaning | 308.00 | 348.04 |
+| Post‑Renovation Cleaning | 373.00 | 421.49 |
+| Airbnb / Rental Cleaning | 273.00 | 308.49 |
+
+**House Cleaning — Hourly** (без доп. опций)
+
+| Часы | До налога (CAD) | С налогом HST 13% (CAD) |
+|---|---|---|
+| 2 ч (минимум, для condo) | 110.00 | 124.30 |
+| 3 ч | 162.00 | 183.06 |
+| 4 ч | 216.00 | 244.08 |
+| 5 ч | 270.00 | 305.10 |
+| 6 ч | 324.00 | 366.12 |
+| 7 ч | 378.00 | 427.14 |
+
+Эффективная ставка: ≈ 54 CAD/ч (с шага в 3 ч); первый 2‑часовой минимум — 55 CAD/ч.
+
+**Office Cleaning**
+
+| Услуга | До налога (CAD) | С налогом HST 13% (CAD) |
+|---|---|---|
+| General Office Cleaning (0–999 ft²) | 72.00 | 81.36 |
+| Office Deep Cleaning | 215.00 | 242.95 |
+
+- **Notes:** несмотря на «Launching Soon» на маркетинговом домене, BookingKoala‑аккаунт уже полностью настроен и работает. Hourly‑опция — прямой аналог Beam $40/hr fallback, но дороже (~$54/hr) и без жёсткого минимума.
 
 ### 10. MaidForHomes CA
 
@@ -303,15 +373,20 @@ Durations: 2–2.5 / 2.5–3 / 3–3.5 часов соответственно.
 
 ## Какие сайты дали полные / частичные / нулевые цены
 
-### Полные (рабочий прайслист в открытом доступе)
+### Полные (рабочий прайслист в открытом доступе на маркетинговом сайте)
 - **Beam Cleaning** — по 5 категориям + по bedroom-tier для condo + по sq.ft для office, плюс 11 extras для condo и 4 для office, плюс recurring discounts и hourly rate $40.
+
+### Полные через калькулятор (минимальная конфигурация снята с booking‑формы)
+- **Toronto Shine Cleaning** — 5 услуг, 1 BR / 0001–0599 ft²: $157.50–$417.38 до налога.
+- **Cleaning Hive** — 5 услуг, Studio / 100–499 ft²: $100–$153.50 до налога (самые низкие в выборке).
+- **PureSpace Cleaning CA** — 5 услуг Package + Hourly (2–7 ч) + Office (2 пакета), 1 BR / 1–999 ft²: $72–$373 до налога.
+- **Deepcleanin6** — Bathroom Only ($90–$250), Condo/Apt Basic 4ч/$270 и Total 6ч/$400, Home Cleaning ≈$255 для конфигурации по умолчанию.
 
 ### Частичные (видны стартовые цены)
 - **RNV Cleaning** — 3 стартовые цены по основным сервисам ($99/$150/$180).
-- **Toronto Shine Cleaning** — opaque на цены, но **открытые cancellation fees** ($50/60%/100%) и список extras без цен.
 
 ### Скрыто до адреса/логина/контактов
-- **Cleaning Hive, Take Care Cleaners, The Cleaning Hero, Deepcleanin6, Spotless Sweep, PureSpace, MaidForHomes** — все требуют либо заполнения lead-form, либо загрузки SPA-формы (которую публично не парсится из-за HMAC-auth + Cloudflare).
+- **Take Care Cleaners, The Cleaning Hero, Spotless Sweep, MaidForHomes** — требуют либо заполнения lead-form, либо загрузки SPA-формы (которую публично не парсится из-за HMAC-auth + Cloudflare); часть сайтов блокировалась организационными настройками.
 
 ---
 
@@ -401,6 +476,31 @@ Durations: 2–2.5 / 2.5–3 / 3–3.5 часов соответственно.
 - Цены из отзывов / маркетинга могут устаревать; «source of truth» — `/api/v1/pricing-parameters` каждой компании.
 - Adjustment пунктов на office у Beam подозрителен (Monthly $1420 для <1000 sq.ft при weekly $127 — вероятно опечатка на сайте, реалистично $142).
 - Полная BookingKoala-схема прайса (item × packages × extras × frequencies × discounts × tax) видна в коде main.js (`itemsForm`, `extrasForm`, `quantity_based`, `count_multiple_spots`, `enable_quantity_based`) — её можно адаптировать в свою таблицу данных 1-в-1.
+
+---
+
+## Сравнение минимальных цен по компаниям (One‑Time, наименьшая конфигурация)
+
+Все цены — до налога, CAD. Источники: калькуляторы соответствующих BookingKoala‑аккаунтов при выборе минимального количества комнат / площади / одноразовой уборки. Сравнение качественное (конфигурации отличаются — Studio у Cleaning Hive против 1 BR у Toronto Shine), но даёт диапазон рынка.
+
+| Услуга | Cleaning Hive (Studio, 100–499 ft²) | Toronto Shine (1 BR, 0–599 ft²) | PureSpace (1 BR, 1–999 ft²) | Beam (1 BR, one‑time) | Deepcleanin6 |
+|---|---|---|---|---|---|
+| Standard / General | $113.50 | $183.75 | $179.00 | $129 | — (есть Home flow, ≈$255 для 3 BR/1000–1499 ft²) |
+| Deep / First‑Time | — | — | $258.00 | $129 + $99 extra = $228 | — |
+| Move In / Out | $108.50 | $213.75 | $308.00 | $129 + $129 extra = $258 | Condo Total 6 ч: $400 |
+| Post‑Renovation / Construction | $153.50 | $417.38 | $373.00 | — | — |
+| Airbnb / Turnover | $113.50 | $183.75 | $273.00 | через add‑on laundry | — |
+| Office (one‑time, минимум) | $100.00 | $157.50 | $72.00 | $149 (<1000 ft²) | — |
+| Bathroom only | — | — | — | — | $90.00 (Mold $250) |
+| Hourly | — | — | $54/ч (2–7 ч) | $40/ч | — |
+
+**Наблюдения:**
+- **Диапазон рынка:** одноразовая уборка ванной у Deepcleanin6 — от ~$90 CAD до полной condo move‑in/out у Deepcleanin6 — ~$400 CAD; пиковая Post‑Renovation у Toronto Shine — $417.38 CAD до налога ($471.64 с HST). При увеличении площади/числа комнат любая из позиций может вырасти ещё на 50–150%.
+- **Cleaning Hive — самый бюджетный** во всех категориях, кроме Office (там лидирует PureSpace с $72). Разница vs Toronto Shine на той же базе: ~38–63%.
+- **Toronto Shine — самый дорогой** по Post‑Renovation ($417.38 vs $153.50 у Hive — разница ×2.7).
+- **PureSpace** держит сбалансированный middle‑tier на Package + предлагает Hourly fallback (как Beam, но дороже: $54/ч vs $40/ч).
+- **Beam** остаётся единственным с полностью публичным прайсом на маркетинге; его базовые цены — самые низкие среди прозрачных ($129 one‑time за 1 BR), но при глубокой уборке он быстро догоняет PureSpace ($228 vs $258).
+- **HST 13%** применяется поверх subtotal у всех — это видно в сводках заказов (например, $183.75 → $207.64; $400 → $452).
 
 ---
 
